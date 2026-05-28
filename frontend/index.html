@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agendamento Online | Serviflex</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #ff2a54; /* Cor vibrante estilo Booksy */
+            --bg: #f8f9fa;
+            --card: #ffffff;
+            --text: #1f2937;
+            --text-light: #6b7280;
+            --border: #e5e7eb;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
+        body { background-color: var(--bg); color: var(--text); padding-bottom: 4rem; }
+
+        /* Header do Estabelecimento */
+        .shop-header {
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=600') center/cover;
+            color: white;
+            padding: 3rem 1.5rem 2rem 1.5rem;
+            text-align: center;
+        }
+        .shop-title { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .shop-badge { background: rgba(255,255,255,0.2); padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.85rem; backdrop-filter: blur(5px); }
+
+        .container { width: 100%; max-width: 600px; margin: 0 auto; padding: 1.5rem; }
+        .section-title { font-size: 1.2rem; font-weight: 600; margin: 1.5rem 0 0.75rem 0; color: var(--text); }
+
+        /* Lista de Serviços Estilo Card */
+        .services-list { display: flex; flex-direction: column; gap: 0.75rem; }
+        .service-card {
+            background: var(--card);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .service-card:hover { border-color: var(--primary); }
+        .service-card.selected { border-color: var(--primary); background-color: #fff5f6; }
+        .service-info h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.25rem; }
+        .service-info p { font-size: 0.85rem; color: var(--text-light); }
+        .service-price { font-weight: 700; color: var(--primary); font-size: 1.05rem; display: flex; align-items: center; gap: 10px; }
+        .radio-circle { width: 20px; height: 20px; border: 2px solid var(--border); border-radius: 50%; display: inline-block; position: relative; }
+        .service-card.selected .radio-circle { border-color: var(--primary); background: var(--primary); }
+
+        /* Inputs Form */
+        .input-group { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; margin-bottom: 0.75rem; display: flex; flex-direction: column; gap: 0.5rem; }
+        .input-group label { font-size: 0.85rem; font-weight: 600; color: var(--text-light); }
+        .input-group input { border: none; outline: none; font-size: 1rem; width: 100%; color: var(--text); background: transparent; }
+
+        /* Grid de Horários */
+        .time-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; }
+        .time-slot { background: var(--card); border: 1px solid var(--border); padding: 0.6rem; text-align: center; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .time-slot:hover { border-color: var(--primary); color: var(--primary); }
+        .time-slot.selected { background: var(--primary); color: white; border-color: var(--primary); }
+
+        /* Botão Fixo de Confirmação inferior */
+        .footer-action { position: fixed; bottom: 0; left: 0; right: 0; background: var(--card); padding: 1rem; border-top: 1px solid var(--border); box-shadow: 0 -4px 10px rgba(0,0,0,0.05); display: flex; justify-content: center; }
+        .btn-book { background: var(--primary); color: white; border: none; width: 100%; max-width: 560px; padding: 1rem; border-radius: 12px; font-size: 1.1rem; font-weight: 700; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; }
+        .btn-book:hover { opacity: 0.9; }
+    </style>
+</head>
+<body>
+
+    <header class="shop-header">
+        <h1 class="shop-title" id="shop-name">Carregando Estabelecimento...</h1>
+        <span class="shop-badge"><i class="fa-solid fa-star" style="color: #f59e0b;"></i> 4.9 • Aberto</span>
+    </header>
+
+    <div class="container">
+        <h2 class="section-title">1. Selecione o Serviço</h2>
+        <div class="services-list">
+            <div class="service-card" onclick="selectService(this, 'Corte Masculino Navalhado', 'R$ 45,00')">
+                <div class="service-info">
+                    <h3>Corte Masculino Navalhado</h3>
+                    <p><i class="fa-regular fa-clock"></i> 45 min</p>
+                </div>
+                <div class="service-price">
+                    <span>R$ 45,00</span>
+                    <span class="radio-circle"></span>
+                </div>
+            </div>
+            
+            <div class="service-card" onclick="selectService(this, 'Barba Completa com Toalha Quente', 'R$ 35,00')">
+                <div class="service-info">
+                    <h3>Barba Completa com Toalha Quente</h3>
+                    <p><i class="fa-regular fa-clock"></i> 30 min</p>
+                </div>
+                <div class="service-price">
+                    <span>R$ 35,00</span>
+                    <span class="radio-circle"></span>
+                </div>
+            </div>
+
+            <div class="service-card" onclick="selectService(this, 'Combo: Cabelo + Barba', 'R$ 70,00')">
+                <div class="service-info">
+                    <h3>Combo: Cabelo + Barba</h3>
+                    <p><i class="fa-regular fa-clock"></i> 1h 15 min</p>
+                </div>
+                <div class="service-price">
+                    <span>R$ 70,00</span>
+                    <span class="radio-circle"></span>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">2. Escolha a Data e Horário</h2>
+        <div class="input-group">
+            <label for="book-date">Data do Atendimento</label>
+            <input type="date" id="book-date" required>
+        </div>
+
+        <div class="time-grid" id="time-grid">
+            <div class="time-slot" onclick="selectTime(this, '09:00')">09:00</div>
+            <div class="time-slot" onclick="selectTime(this, '10:00')">10:00</div>
+            <div class="time-slot" onclick="selectTime(this, '11:00')">11:00</div>
+            <div class="time-slot" onclick="selectTime(this, '13:00')">13:00</div>
+            <div class="time-slot" onclick="selectTime(this, '14:00')">14:00</div>
+            <div class="time-slot" onclick="selectTime(this, '15:00')">15:00</div>
+            <div class="time-slot" onclick="selectTime(this, '16:00')">16:00</div>
+            <div class="time-slot" onclick="selectTime(this, '17:00')">17:00</div>
+        </div>
+
+        <h2 class="section-title">3. Seus Dados de Contato</h2>
+        <div class="input-group">
+            <label for="client-name">Seu Nome Completo</label>
+            <input type="text" id="client-name" placeholder="Como quer ser chamado?" required>
+        </div>
+        <div class="input-group">
+            <label for="client-phone">Seu WhatsApp</label>
+            <input type="tel" id="client-phone" placeholder="(00) 99999-9999" required>
+        </div>
+    </div>
+
+    <div class="footer-action">
+        <button class="btn-book" onclick="finalizarAgendamentoBooksy()">
+            <i class="fa-solid fa-circle-check"></i> Confirmar Agendamento
+        </button>
+    </div>
+
+    <script>
+        let selectedServiceText = "";
+        let selectedTimeText = "";
+        let empresaIdAtiva = 1; // Fallback caso não venha ID na URL
+
+        // Executado ao carregar a página: captura a Empresa Dinamicamente da URL
+        document.addEventListener("DOMContentLoaded", () => {
+            // Define o dia de amanhã como padrão no input date
+            const amanha = new Date();
+            amanha.setDate(amanha.getDate() + 1);
+            document.getElementById("book-date").value = amanha.toISOString().split('T')[0];
+
+            // Lê o ID da empresa vindo na URL (?empresa=X)
+            const urlParams = new URLSearchParams(window.location.search);
+            const idParam = urlParams.get('empresa');
+            if (idParam) {
+                empresaIdAtiva = parseInt(idParam);
+            }
+            
+            buscarDadosEmpresaNoH2(empresaIdAtiva);
+        });
+
+        async function buscarDadosEmpresaNoH2(id) {
+            try {
+                const res = await fetch(`http://localhost:8080/api/empresas`);
+                const empresas = await res.json();
+                const empresaEncontrada = empresas.find(e => e.id === id);
+                
+                if (empresaEncontrada) {
+                    document.getElementById("shop-name").innerText = empresaEncontrada.nomeEmpresa;
+                } else {
+                    document.getElementById("shop-name").innerText = "Estabelecimento Parceiro";
+                }
+            } catch (err) {
+                document.getElementById("shop-name").innerText = "Serviflex Barber & Beauty";
+                console.error("Back-end offline ou erro de rede", err);
+            }
+        }
+
+        function selectService(card, nomeServico, preco) {
+            document.querySelectorAll('.service-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            selectedServiceText = nomeServico;
+        }
+
+        function selectTime(slot, horario) {
+            document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+            slot.classList.add('selected');
+            selectedTimeText = horario;
+        }
+
+        async function finalizarAgendamentoBooksy() {
+            const dataEscolhida = document.getElementById("book-date").value;
+            const nomeCli = document.getElementById("client-name").value;
+            const telCli = document.getElementById("client-phone").value;
+
+            // Validações básicas idênticas ao fluxo real de produção
+            if (!selectedServiceText) { alert("Por favor, selecione qual serviço você deseja realizar."); return; }
+            if (!dataEscolhida) { alert("Por favor, selecione a data do atendimento."); return; }
+            if (!selectedTimeText) { alert("Por favor, escolha um dos horários disponíveis na agenda."); return; }
+            if (!nomeCli || !telCli) { alert("Por favor, informe seu nome e contato para enviarmos a confirmação."); return; }
+
+            // Monta o payload Multi-tenant associando o agendamento à empresa correspondente
+            const payload = {
+                data: dataEscolhida,
+                hora: selectedTimeText,
+                servico: selectedServiceText,
+                nomeCliente: nomeCli,
+                telefoneCliente: telCli,
+                empresa: { id: empresaIdAtiva }
+            };
+
+            try {
+                const response = await fetch("http://localhost:8080/api/agendamentos", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    alert(`🎉 Sucesso, ${nomeCli}!\nSeu horário para "${selectedServiceText}" foi agendado para o dia ${dataEscolhida} às ${selectedTimeText}.\n\nO estabelecimento já recebeu sua solicitação!`);
+                    
+                    // Limpa o formulário de cliente e seletores
+                    document.getElementById("client-name").value = "";
+                    document.getElementById("client-phone").value = "";
+                    document.querySelectorAll('.service-card, .time-slot').forEach(el => el.classList.remove('selected'));
+                    selectedServiceText = "";
+                    selectedTimeText = "";
+                } else {
+                    alert("Houve um problema ao processar seu agendamento no servidor.");
+                }
+            } catch (error) {
+                alert("Erro ao conectar com o servidor central do Serviflex. Verifique se a API Java está rodando.");
+            }
+        }
+    </script>
+</body>
+</html>
