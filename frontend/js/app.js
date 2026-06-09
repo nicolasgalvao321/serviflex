@@ -206,7 +206,7 @@ function filtrarClientes() {
     });
 }
 
-function局inicializarTemaGlobal() // Fallback de proteção
+functioninicializarTemaGlobal() // Fallback de proteção
 function inicializarTemaGlobal() {
     const t = document.querySelector('.theme-switch input'); 
     if(t) {
