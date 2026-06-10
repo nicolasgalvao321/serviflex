@@ -105,7 +105,6 @@ async function listarClientesAdmin() {
             </tr>`;
         });
 
-        // Atualizar painel de estatísticas (se existir na tela atual)
         if(document.getElementById("total-clientes")) {
             document.getElementById("total-clientes").innerText = data.length;
             document.getElementById("clientes-gold").innerText = data.filter(c => c.nivelFidelidade === "GOLD").length;
@@ -140,18 +139,33 @@ async function deletarCliente(id) {
     } 
 }
 
+/* ================= FUNÇÃO DISPARAR IA ATUALIZADA ================= */
 async function dispararIA(id, tipo) {
     try {
+        // 1. Busca a mensagem gerada dinamicamente pelo endpoint cognitivo do Java
         const resMsg = await fetch(`${API_URL}/${id}/mensagem-ia?tipo=${tipo}`); 
+        if (!resMsg.ok) throw new Error("A API Java retornou um erro ao processar a IA.");
         const txt = await resMsg.text();
         
+        // 2. Busca a lista para obter o telefone real salvo do cliente
         const resC = await fetch(API_URL); 
         const clientes = await resC.json(); 
         const c = clientes.find(item => item.id === id);
         
+        if (!c) { 
+            alert("⚠️ Cliente não localizado no banco H2."); 
+            return; 
+        }
+        
+        // 3. Alerta de sucesso exibindo o poder do algoritmo no seu TCC
         alert(`🤖 Mensagem Cognitiva Criada pelo Java:\n\n"${txt}"`);
-        window.open(`https://api.whatsapp.com/send?phone=${c.telefone}&text=${encodeURIComponent(txt)}`, "_blank");
-    } catch (err) { console.error(err); }
+        
+        // 4. Abre o WhatsApp com o texto já embutido de forma limpa
+        window.open(`https://api.whatsapp.com/send?phone=${encodeURIComponent(c.telefone)}&text=${encodeURIComponent(txt)}`, "_blank");
+    } catch (err) { 
+        console.error(err); 
+        alert("⚠️ Erro crítico: Certifique-se de que o seu ClienteController possui o método mapeando a rota '/{id}/mensagem-ia' e que o Spring Boot está ativo!");
+    }
 }
 
 /* ================= AGENDAMENTOS ================= */
@@ -206,7 +220,6 @@ function filtrarClientes() {
     });
 }
 
-functioninicializarTemaGlobal() // Fallback de proteção
 function inicializarTemaGlobal() {
     const t = document.querySelector('.theme-switch input'); 
     if(t) {
