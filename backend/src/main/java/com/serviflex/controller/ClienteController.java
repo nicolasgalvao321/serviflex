@@ -1,16 +1,9 @@
 package com.serviflex.controller;
 
 import java.util.List;
+import java.util.Optional;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.serviflex.ai.MensagemIAService;
 import com.serviflex.model.Cliente;
@@ -32,34 +25,58 @@ public class ClienteController {
         this.mensagemIAService = mensagemIAService;
     }
 
+    /* ================= LISTAR TODOS ================= */
+
     @GetMapping
     public List<Cliente> listar() {
         return repository.findAll();
     }
 
+    /* ================= BUSCAR POR ID ================= */
+
     @GetMapping("/{id}")
     public Cliente buscarPorId(@PathVariable Long id) {
-        return repository.findById(id).orElse(null);
+
+        Optional<Cliente> cliente = repository.findById(id);
+
+        return cliente.orElse(null);
     }
+
+    /* ================= SALVAR ================= */
 
     @PostMapping
     public Cliente salvar(@RequestBody Cliente cliente) {
+
+        if (cliente.getNivelFidelidade() == null) {
+            cliente.setNivelFidelidade("BRONZE");
+        }
+
         return repository.save(cliente);
     }
 
+    /* ================= DELETAR ================= */
+
     @DeleteMapping("/{id}")
     public void deletar(@PathVariable Long id) {
-        repository.deleteById(id);
+
+        if (repository.existsById(id)) {
+            repository.deleteById(id);
+        }
     }
 
+    /* ================= IA ================= */
+
     @GetMapping("/{id}/mensagem-ia")
-    public String gerarMensagem(
+    public String gerarMensagemIA(
             @PathVariable Long id,
-            @RequestParam String tipo) {
+            @RequestParam(defaultValue = "fidelidade") String tipo) {
 
-        Cliente cliente = repository.findById(id)
-                .orElse(null);
+        Optional<Cliente> cliente = repository.findById(id);
 
-        return mensagemIAService.gerarMensagem(cliente, tipo);
+        if (cliente.isEmpty()) {
+            return "Cliente não encontrado.";
+        }
+
+        return mensagemIAService.gerarMensagem(cliente.get(), tipo);
     }
 }
