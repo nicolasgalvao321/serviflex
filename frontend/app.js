@@ -95,7 +95,7 @@ async function listarClientesAdmin() {
                 <td>${c.telefone}</td>
                 <td>${c.email}</td>
                 <td><i class="fa-solid fa-bolt" style="color:#eab308"></i> ${c.points} XP</td>
-                <td><span class="badge badge-${c.nivelFidelidade.toLowerCase()}">${c.nivelFidelidade}</span></td>
+                <td><span class="badge badge-${(c.nivelFidelidade || "bronze").toLowerCase()">${c.nivelFidelidade}</span></td>
                 <td>${c.diasDesdeUltimaVisita} dias</td>
                 <td class="action-buttons">
                     <button class="btn-ia-fid" onclick="dispararIA(${c.id}, 'fidelidade')"><i class="fa-solid fa-brain"></i> IA Fidelidade</button>
