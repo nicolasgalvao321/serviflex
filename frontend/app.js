@@ -1,6 +1,6 @@
-const API_URL = "http://localhost:8080/api/clientes";
-const API_EMPRESAS_URL = "http://localhost:8080/api/empresas";
-const API_AGENDAMENTOS_URL = "http://localhost:8080/api/agendamentos";
+const API_URL = "https://serviflex-production.up.railway.app/api/clientes";
+const API_EMPRESAS_URL = "https://serviflex-production.up.railway.app/api/empresas";
+const API_AGENDAMENTOS_URL = "https://serviflex-production.up.railway.app/api/agendamentos";
 
 document.addEventListener("DOMContentLoaded", () => {
     inicializarTemaGlobal();
